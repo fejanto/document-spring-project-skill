@@ -1,0 +1,48 @@
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+*.swo
+*~
+
+# Output files
+output/
+generated/
+dist/
+
+# Node (if any tooling is added)
+node_modules/
+npm-debug.log
+
+# Python (if any tooling is added)
+__pycache__/
+*.py[cod]
+.env
+venv/
+
+# Test outputs
+test-results/
+coverage/
