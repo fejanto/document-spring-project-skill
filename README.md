@@ -28,22 +28,30 @@ A Claude Code skill that analyzes Spring Boot microservices and generates compre
 
 ## Quick Start
 
-### Installation
+### Installation via Plugin (Recommended)
 
-**Project-specific installation:**
 ```bash
-# In your Spring Boot project directory
-mkdir -p .claude/skills
-cd .claude/skills
-git clone https://github.com/YOUR-USERNAME/document-spring-project-skill.git
+# Add the marketplace
+/plugin marketplace add fejanto/document-spring-project-skill
+
+# Install the plugin
+/plugin install document-spring-project@fejanto-skills
 ```
 
-**Global installation:**
+### Alternative: Manual Installation
+
+**Project-specific:**
 ```bash
-# In your home directory
+mkdir -p .claude/skills
+cd .claude/skills
+git clone https://github.com/fejanto/document-spring-project-skill.git
+```
+
+**Global:**
+```bash
 mkdir -p ~/.claude/skills
 cd ~/.claude/skills
-git clone https://github.com/YOUR-USERNAME/document-spring-project-skill.git
+git clone https://github.com/fejanto/document-spring-project-skill.git
 ```
 
 ### Usage
@@ -232,19 +240,24 @@ README.md:
 
 ```
 document-spring-project-skill/
-├── SKILL.md                    # Main skill file (what Claude reads)
+├── .claude-plugin/
+│   ├── plugin.json             # Plugin manifest
+│   └── marketplace.json        # Marketplace catalog
+├── skills/
+│   └── document-spring-project/
+│       ├── SKILL.md            # Main skill file (what Claude reads)
+│       ├── scripts/
+│       │   ├── analyze.sh      # Automated analysis script
+│       │   └── helpers.sh      # Bash helper functions
+│       └── templates/
+│           ├── interview-questions.md
+│           ├── readme-template.md
+│           └── instructions-template.md
+├── examples/
+│   ├── sample-output-readme.md
+│   └── sample-output-instructions.md
 ├── README.md                   # This file
-├── .gitignore
-├── scripts/
-│   ├── analyze.sh              # Automated analysis script
-│   └── helpers.sh              # Bash helper functions
-├── templates/
-│   ├── interview-questions.md  # Question templates
-│   ├── readme-template.md      # README structure
-│   └── instructions-template.md # Instructions structure
-└── examples/
-    ├── sample-output-readme.md
-    └── sample-output-instructions.md
+└── .gitignore
 ```
 
 ## Contributing

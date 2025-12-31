@@ -1,0 +1,34 @@
+{
+  "name": "fejanto-skills",
+  "owner": {
+    "name": "fejanto"
+  },
+  "metadata": {
+    "description": "Collection of Claude Code skills for Spring Boot development",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "document-spring-project",
+      "source": "./",
+      "description": "Analyzes Spring Boot microservices and generates comprehensive documentation (README.md + .claude/instructions.md) through automated technical analysis and interactive interview",
+      "version": "1.0.0",
+      "author": {
+        "name": "fejanto"
+      },
+      "homepage": "https://github.com/fejanto/document-spring-project-skill",
+      "repository": "https://github.com/fejanto/document-spring-project-skill",
+      "license": "MIT",
+      "keywords": [
+        "spring-boot",
+        "documentation",
+        "microservices",
+        "kafka",
+        "jpa",
+        "readme",
+        "architecture"
+      ],
+      "category": "development"
+    }
+  ]
+}
