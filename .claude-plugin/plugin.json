@@ -1,6 +1,6 @@
 {
   "name": "document-spring-project",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Analyzes Spring Boot microservices and generates comprehensive documentation (README.md + .claude/instructions.md) through automated technical analysis and interactive interview",
   "author": {
     "name": "fejanto",
