@@ -82,7 +82,7 @@ debug() {
 # XML/CONFIG EXTRACTION FUNCTIONS
 # =============================================================================
 
-# Extract value from XML tag
+# Extract value from XML tag (portable - works on macOS and Linux)
 # Usage: extract_xml_value "file.xml" "tag.name"
 extract_xml_value() {
     local file="$1"
@@ -93,8 +93,9 @@ extract_xml_value() {
     fi
 
     # Handle nested tags (e.g., java.version -> <java.version>)
+    # Using sed for portability (no grep -P)
     local value
-    value=$(grep -oP "(?<=<${tag}>)[^<]+" "$file" 2>/dev/null | head -1)
+    value=$(sed -n "s|.*<${tag}>\([^<]*\)</\?${tag}>.*|\1|p" "$file" 2>/dev/null | head -1)
 
     if [[ -n "$value" ]]; then
         echo "$value"
@@ -102,6 +103,30 @@ extract_xml_value() {
     fi
 
     return 1
+}
+
+# =============================================================================
+# PORTABLE REGEX EXTRACTION
+# =============================================================================
+
+# Extract text matching a pattern using sed (portable alternative to grep -oP)
+# Usage: extract_pattern "file" "prefix" "suffix"
+# Example: extract_pattern "file.xml" "<version>" "</version>" extracts content between tags
+extract_between() {
+    local file="$1"
+    local prefix="$2"
+    local suffix="$3"
+
+    sed -n "s|.*${prefix}\([^${suffix:0:1}]*\)${suffix}.*|\1|p" "$file" 2>/dev/null | head -1
+}
+
+# Extract content after a pattern (portable)
+# Usage: extract_after "file" "pattern"
+extract_after() {
+    local file="$1"
+    local pattern="$2"
+
+    grep "$pattern" "$file" 2>/dev/null | sed "s|.*${pattern}||" | head -1
 }
 
 # Extract value from properties file
