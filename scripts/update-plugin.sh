@@ -84,9 +84,17 @@ if git pull origin master --quiet; then
         git stash pop --quiet || true
     fi
 
-    echo "Changes will take effect on next Claude Code restart or plugin reload."
+    # Clear plugin cache to force reload
+    echo "Clearing plugin cache..."
+    CACHE_DIR="$HOME/.claude/plugins/cache/fejanto-skills/document-spring-project"
+    if [ -d "$CACHE_DIR" ]; then
+        rm -rf "$CACHE_DIR"
+        echo "✅ Cache cleared successfully"
+    fi
+
     echo ""
-    echo "To reload now: /plugin reload document-spring-project"
+    echo "Changes will take effect on next use of the skill."
+    echo "The skill will automatically load the new version."
 else
     echo "❌ Update failed. Please check git status and try manually."
 

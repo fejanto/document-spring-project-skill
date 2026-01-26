@@ -41,12 +41,20 @@ check_git_updates() {
     local remote_commit=$(git rev-parse origin/master)
 
     if [ "$local_commit" != "$remote_commit" ]; then
+        # Clear old cache to prepare for update
+        local cache_dir="$HOME/.claude/plugins/cache/fejanto-skills/document-spring-project"
+        if [ -d "$cache_dir" ]; then
+            rm -rf "$cache_dir" 2>/dev/null || true
+        fi
+
         echo "📦 Update available for document-spring-project plugin"
         echo "   Current: ${local_commit:0:8}"
         echo "   Latest:  ${remote_commit:0:8}"
         echo ""
-        echo "   Run: /plugin update document-spring-project"
+        echo "   Run: /docs-update"
         echo "   Or:  cd $PLUGIN_DIR && git pull origin master"
+        echo ""
+        echo "   (Old cache cleared automatically)"
         echo ""
         return 1
     fi

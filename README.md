@@ -157,6 +157,7 @@ The plugin includes an automatic update system:
 
 - **Automatic**: Checks for updates every 24 hours when Claude Code loads the plugin
 - **Non-intrusive**: Only shows a notification, doesn't update automatically
+- **Cache cleaning**: Automatically clears old cache when update is detected
 - **Works with git**: Requires the plugin to be installed as a git repository
 
 **When an update is available, you'll see:**
@@ -166,6 +167,9 @@ The plugin includes an automatic update system:
    Latest:  f7e2d943
 
    Run: /docs-update
+   Or:  cd /path/to/plugin && git pull origin master
+
+   (Old cache cleared automatically)
 ```
 
 ### Manual Update

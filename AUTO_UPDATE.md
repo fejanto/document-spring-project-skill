@@ -11,6 +11,7 @@ Cuando Claude Code carga el plugin (al iniciar o al ejecutar comandos del plugin
 - ✅ Verifica si han pasado más de 24 horas desde la última verificación
 - ✅ Hace `git fetch` para ver si hay nuevas versiones en el repositorio
 - ✅ Compara commit local vs. commit remoto
+- ✅ **Limpia automáticamente el cache viejo** para preparar la actualización
 - ✅ Muestra notificación si hay actualización disponible
 
 **Ejemplo de notificación:**
@@ -19,8 +20,10 @@ Cuando Claude Code carga el plugin (al iniciar o al ejecutar comandos del plugin
    Current: a3f4b891
    Latest:  f7e2d943
 
-   Run: /plugin update document-spring-project
-   Or:  /docs-update
+   Run: /docs-update
+   Or:  cd /path/to/plugin && git pull origin master
+
+   (Old cache cleared automatically)
 ```
 
 ### 2. Configuración en plugin.json
@@ -52,7 +55,8 @@ Este comando:
 3. Hace `git stash` de cambios locales (si existen)
 4. Hace `git pull origin master`
 5. Restaura cambios locales (si fueron stashed)
-6. Indica que necesitas recargar el plugin
+6. **Limpia automáticamente el cache del plugin**
+7. La nueva versión se carga automáticamente en el próximo uso
 
 ### Opción 2: Comando de Claude Code
 
@@ -240,11 +244,41 @@ LOG_FILE="$PLUGIN_DIR/.update-check.log"
 echo "$(date): Checking for updates..." >> "$LOG_FILE"
 ```
 
+## 🧹 Limpieza Automática del Cache
+
+El sistema de actualización incluye limpieza automática del cache para garantizar que siempre uses la versión más reciente:
+
+### ¿Por qué es necesario?
+
+Claude Code cachea los plugins en `~/.claude/plugins/cache/` para mejorar el rendimiento. Sin embargo, este cache no se actualiza automáticamente cuando hay nuevas versiones.
+
+### Cuándo se limpia el cache
+
+1. **Cuando el hook detecta una actualización**: Al encontrar una nueva versión, el hook onLoad elimina automáticamente el cache viejo
+2. **Después de ejecutar `/docs-update`**: El script limpia el cache después de hacer git pull
+3. **Resultado**: La próxima vez que uses el skill, Claude cargará la versión nueva
+
+### Ubicación del cache
+
+```bash
+~/.claude/plugins/cache/fejanto-skills/document-spring-project/
+```
+
+### Limpieza manual (si es necesario)
+
+```bash
+# Si experimentas problemas, puedes limpiar el cache manualmente
+rm -rf ~/.claude/plugins/cache/fejanto-skills/document-spring-project
+
+# Luego simplemente usa el skill normalmente
+/docs
+```
+
 ## 🎯 Mejores Prácticas
 
 1. **Usa el comando `/docs-update`** - Es la forma más segura y te muestra qué va a cambiar
 2. **Revisa los cambios** antes de confirmar la actualización
-3. **Reinicia Claude Code** después de actualizar para asegurar que todo funcione
+3. **No necesitas reiniciar Claude Code** - El cache se limpia automáticamente
 4. **Haz backup** de tu configuración si tienes personalizaciones locales
 
 ## 🔐 Seguridad
