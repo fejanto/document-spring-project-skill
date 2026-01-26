@@ -859,7 +859,7 @@ run_enhanced_analysis() {
     esac
 }
 
-# Export functions for use by SKILL.md
+# Export functions for use by skill file
 export -f detect_existing_documentation
 export -f detect_git_changes
 export -f analyze_specific_files

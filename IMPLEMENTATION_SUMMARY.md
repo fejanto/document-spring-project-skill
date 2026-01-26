@@ -82,8 +82,10 @@ Generic "Order Management Service" examples (no private references):
 - Updated description with new features
 - Added keywords: `claude-code`, `incremental`, `ddd`, `patterns`
 
-**SKILL.md**:
+**document-spring-project.md** (skill file):
+
 - Complete rewrite (~965 lines, was ~647)
+
 - 3 operation modes with detailed workflows
 - Mandatory mode selection at start
 - Git-based change detection for incremental mode
@@ -348,9 +350,11 @@ git commit -m "feat: v2.0 - Add incremental/selective modes and Claude Code 2026
 - New git-utils.sh for change detection
 
 Breaking changes:
-- SKILL.md completely rewritten
+
+- Skill file (document-spring-project.md) completely rewritten
 - New template structure (old templates still work)
 - Requires mode selection at start"
+
 
 git push origin master
 ```

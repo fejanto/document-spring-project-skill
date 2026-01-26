@@ -297,9 +297,10 @@ document-spring-project-skill/
 │   ├── plugin.json             # Plugin manifest
 │   └── marketplace.json        # Marketplace catalog
 ├── skills/
-│   └── document-spring-project/
-│       ├── SKILL.md            # Main skill file (what Claude reads)
-│       ├── scripts/
+│ └── document-spring-project/
+│ ├── document-spring-project.md # Main skill file (what Claude reads)
+│ ├── scripts/
+
 │       │   ├── analyze.sh      # Automated analysis script
 │       │   └── helpers.sh      # Bash helper functions
 │       └── templates/

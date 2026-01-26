@@ -1,6 +1,6 @@
 {
   "name": "document-spring-project",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Analyzes Spring Boot microservices and generates comprehensive documentation following Claude Code 2026 patterns (CLAUDE.md + .claude/rules/ + docs/) through automated technical analysis and interactive interview. Supports full, incremental, and selective documentation modes.",
   "author": {
     "name": "fejanto",
