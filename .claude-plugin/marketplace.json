@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Collection of Claude Code skills for Spring Boot development",
-    "version": "1.0.1"
+    "version": "2.0.0"
   },
   "plugins": [
     {
       "name": "document-spring-project",
       "source": "./",
-      "description": "Analyzes Spring Boot microservices and generates comprehensive documentation (README.md + .claude/instructions.md) through automated technical analysis and interactive interview",
-      "version": "1.0.1",
+      "description": "Analyzes Spring Boot microservices and generates comprehensive documentation following Claude Code 2026 patterns (CLAUDE.md + .claude/rules/ + docs/) through automated technical analysis and interactive interview. Supports full, incremental, and selective documentation modes.",
+      "version": "2.0.0",
       "author": {
         "name": "fejanto"
       },
