@@ -1,0 +1,56 @@
+# Build outputs
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.DS_Store
+*.swp
+
+# Logs y temporales
+*.log
+logs/
+*.tmp
+*.temp
+
+# Environment
+local-env/
+.env
+.env.*
+
+# Test outputs
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Git
+.git/
+.worktrees/
+
+{{#if IS_MAVEN}}
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+{{/if}}
+
+{{#if IS_GRADLE}}
+# Gradle
+.gradle/
+gradlew
+gradlew.bat
+{{/if}}
+
+# Documentación exhaustiva (solo cargar bajo demanda)
+docs/domain/*-analysis.md
+docs/plans/*.md
+{{#if HAS_DATABASE_DOCS}}
+docs/database/migrations/
+{{/if}}

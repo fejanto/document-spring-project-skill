@@ -1,0 +1,44 @@
+# Build outputs
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.DS_Store
+*.swp
+
+# Logs y temporales
+*.log
+logs/
+*.tmp
+*.temp
+
+# Environment
+local-env/
+.env
+.env.*
+
+# Test outputs
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Git
+.git/
+.worktrees/
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# Documentación exhaustiva (solo cargar bajo demanda)
+docs/plans/*.md
+docs/database/migrations/

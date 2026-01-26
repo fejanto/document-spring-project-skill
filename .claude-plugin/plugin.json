@@ -1,7 +1,7 @@
 {
   "name": "document-spring-project",
-  "version": "1.0.1",
-  "description": "Analyzes Spring Boot microservices and generates comprehensive documentation (README.md + .claude/instructions.md) through automated technical analysis and interactive interview",
+  "version": "2.0.0",
+  "description": "Analyzes Spring Boot microservices and generates comprehensive documentation following Claude Code 2026 patterns (CLAUDE.md + .claude/rules/ + docs/) through automated technical analysis and interactive interview. Supports full, incremental, and selective documentation modes.",
   "author": {
     "name": "fejanto",
     "url": "https://github.com/fejanto"
@@ -16,7 +16,31 @@
     "kafka",
     "jpa",
     "readme",
-    "architecture"
+    "architecture",
+    "claude-code",
+    "incremental",
+    "ddd",
+    "patterns"
   ],
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "commands": [
+    {
+      "name": "docs",
+      "description": "Generate or update Spring Boot project documentation",
+      "skill": "document-spring-project"
+    },
+    {
+      "name": "docs-update",
+      "description": "Update document-spring-project plugin to latest version",
+      "script": "./scripts/update-plugin.sh"
+    }
+  ],
+  "hooks": {
+    "onLoad": "./.claude-plugin/hooks/on-load.sh"
+  },
+  "autoUpdate": {
+    "enabled": true,
+    "checkInterval": 86400,
+    "source": "git"
+  }
 }

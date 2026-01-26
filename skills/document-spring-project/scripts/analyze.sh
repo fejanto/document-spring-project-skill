@@ -613,3 +613,254 @@ echo "Exceptions: ${EXCEPTION_COUNT:-0} custom, ${ROOT_EXCEPTION_COUNT:-0} root 
 echo "Tests: ${UNIT_TESTS:-0} unit, ${INTEGRATION_TESTS:-0} integration"
 echo ""
 success "Analysis complete!"
+
+# =============================================================================
+# ENHANCED DOCUMENTATION MODES (v2.0)
+# =============================================================================
+
+# Parse command-line arguments for enhanced modes
+parse_enhanced_args() {
+    local mode="full"
+    local specific_files=()
+    local specific_section=""
+
+    while [[ $# -gt 0 ]]; do
+        case $1 in
+            --mode)
+                mode="$2"
+                shift 2
+                ;;
+            --files)
+                IFS=',' read -ra specific_files <<< "$2"
+                shift 2
+                ;;
+            --section)
+                specific_section="$2"
+                shift 2
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+
+    echo "MODE=$mode"
+    echo "SECTION=$specific_section"
+    if [ ${#specific_files[@]} -gt 0 ]; then
+        printf 'FILES=%s\n' "${specific_files[@]}"
+    fi
+}
+
+# Detect existing documentation structure
+detect_existing_documentation() {
+    section "Existing Documentation Detection"
+
+    local has_claude_md=false
+    local has_rules=false
+    local has_docs=false
+    local has_readme=false
+    local has_old_instructions=false
+
+    [ -f "CLAUDE.md" ] && has_claude_md=true
+    [ -d ".claude/rules" ] && [ "$(ls -A .claude/rules 2>/dev/null)" ] && has_rules=true
+    [ -d "docs" ] && [ "$(ls -A docs 2>/dev/null)" ] && has_docs=true
+    [ -f "README.md" ] && has_readme=true
+    [ -f ".claude/instructions.md" ] && has_old_instructions=true
+
+    if $has_claude_md; then
+        success "CLAUDE.md found"
+    else
+        info "CLAUDE.md not found (will be created)"
+    fi
+
+    if $has_rules; then
+        success ".claude/rules/ directory found"
+        local rules_files=$(find .claude/rules -name "*.md" -type f 2>/dev/null | wc -l | tr -d ' ')
+        info "  $rules_files rule files detected"
+    else
+        info ".claude/rules/ not found (will be created)"
+    fi
+
+    if $has_docs; then
+        success "docs/ directory found"
+        local doc_subdirs=$(find docs -mindepth 1 -maxdepth 1 -type d 2>/dev/null | wc -l | tr -d ' ')
+        info "  $doc_subdirs subdirectories detected"
+    else
+        info "docs/ not found (will be created)"
+    fi
+
+    if $has_readme; then
+        success "README.md found"
+    else
+        info "README.md not found (will be created)"
+    fi
+
+    if $has_old_instructions; then
+        warning ".claude/instructions.md found (legacy format - will be deprecated)"
+    fi
+
+    echo ""
+    echo "EXISTING_DOCS=claude_md:$has_claude_md,rules:$has_rules,docs:$has_docs,readme:$has_readme,old_instructions:$has_old_instructions"
+}
+
+# Use git-utils.sh to get incremental info
+detect_git_changes() {
+    if ! git rev-parse --git-dir &>/dev/null; then
+        warning "Not a git repository - incremental mode unavailable"
+        return 1
+    fi
+
+    section "Git Change Detection"
+
+    # Source git-utils.sh if available
+    if [[ -f "${SCRIPT_DIR}/git-utils.sh" ]]; then
+        source "${SCRIPT_DIR}/git-utils.sh"
+
+        local last_commit=$(detect_last_doc_commit)
+        if [[ -z "$last_commit" ]]; then
+            info "No previous documentation commits found"
+            echo "LAST_DOC_COMMIT=none"
+            return 0
+        fi
+
+        success "Last documentation commit: ${last_commit:0:8}"
+
+        local changed_files=$(get_changed_files_since "$last_commit")
+        if [[ -z "$changed_files" ]]; then
+            info "No changes since last documentation update"
+            echo "CHANGED_FILES=0"
+            return 0
+        fi
+
+        local change_count=$(echo "$changed_files" | wc -l | tr -d ' ')
+        info "Changed files since last docs: $change_count"
+
+        echo "LAST_DOC_COMMIT=$last_commit"
+        echo "CHANGED_FILES=$change_count"
+        echo "CHANGES_LIST<<EOF"
+        echo "$changed_files"
+        echo "EOF"
+
+        # Categorize changes
+        echo ""
+        info "Categorizing changes..."
+        local changes_array=()
+        while IFS= read -r file; do
+            changes_array+=("$file")
+        done <<< "$changed_files"
+
+        categorize_changes "${changes_array[@]}"
+    else
+        warning "git-utils.sh not found - limited git functionality"
+        return 1
+    fi
+}
+
+# Analyze specific files only (for incremental mode)
+analyze_specific_files() {
+    local files=("$@")
+
+    section "Analyzing Specific Files (${#files[@]} files)"
+
+    for file in "${files[@]}"; do
+        if [[ ! -f "$file" ]]; then
+            warning "File not found: $file"
+            continue
+        fi
+
+        info "Analyzing: $file"
+
+        # Detect file type and extract relevant info
+        if [[ "$file" =~ Controller\.java$ ]]; then
+            # Extract endpoints from this controller only
+            local class_name=$(basename "$file" .java)
+            success "  Controller: $class_name"
+
+            local base_path=$(grep "@RequestMapping" "$file" | head -1 | sed -n 's|.*@RequestMapping("\([^"]*\)".*|\1|p')
+            [[ -n "$base_path" ]] && info "    Base path: $base_path"
+
+            local endpoints=$(grep -E "@(Get|Post|Put|Delete|Patch)Mapping" "$file" 2>/dev/null | wc -l | tr -d ' ')
+            info "    Endpoints: $endpoints"
+
+        elif [[ "$file" =~ Entity\.java$ ]] || [[ "$file" =~ Document\.java$ ]]; then
+            # Extract entity info
+            local class_name=$(basename "$file" .java)
+            success "  Entity: $class_name"
+
+            local table=$(grep "@Table" "$file" | sed -n 's|.*name\s*=\s*"\([^"]*\)".*|\1|p')
+            [[ -n "$table" ]] && info "    Table: $table"
+
+            local collection=$(grep "@Document" "$file" | sed -n 's|.*collection\s*=\s*"\([^"]*\)".*|\1|p')
+            [[ -n "$collection" ]] && info "    Collection: $collection"
+
+        elif [[ "$file" =~ Service\.java$ ]]; then
+            # Extract service info
+            local class_name=$(basename "$file" .java")
+            success "  Service: $class_name"
+
+            local public_methods=$(grep -E "^\s*public\s+" "$file" 2>/dev/null | wc -l | tr -d ' ')
+            info "    Public methods: $public_methods"
+
+        elif grep -q "@KafkaListener" "$file" 2>/dev/null; then
+            # Kafka consumer
+            local class_name=$(basename "$file" .java)
+            success "  Kafka Consumer: $class_name"
+
+            local topics=$(grep "@KafkaListener" "$file" | sed -n 's|.*topics\s*=\s*[{\"]\([^}\"]*\)[}\"].*|\1|p')
+            [[ -n "$topics" ]] && info "    Topics: $topics"
+
+        elif grep -q "@FeignClient" "$file" 2>/dev/null; then
+            # Feign client
+            local class_name=$(basename "$file" .java)
+            success "  Feign Client: $class_name"
+
+            local service=$(grep "@FeignClient" "$file" | sed -n 's|.*name\s*=\s*"\([^"]*\)".*|\1|p')
+            [[ -n "$service" ]] && info "    Target service: $service"
+
+        else
+            info "  Unknown file type (skipping detailed analysis)"
+        fi
+
+        echo ""
+    done
+}
+
+# Main entry point for enhanced modes
+run_enhanced_analysis() {
+    local mode="${DOC_MODE:-full}"
+    local section="${DOC_SECTION:-}"
+
+    case "$mode" in
+        full)
+            info "Running FULL analysis (all files, complete interview)"
+            detect_existing_documentation
+            ;;
+
+        incremental)
+            info "Running INCREMENTAL analysis (changes since last docs)"
+            detect_existing_documentation
+            detect_git_changes
+            ;;
+
+        selective)
+            info "Running SELECTIVE analysis (specific section: $section)"
+            detect_existing_documentation
+            if [[ -n "$section" ]]; then
+                success "Target section: $section"
+            else
+                warning "No section specified with --section flag"
+            fi
+            ;;
+
+        *)
+            error "Unknown mode: $mode"
+            exit 1
+            ;;
+    esac
+}
+
+# Export functions for use by SKILL.md
+export -f detect_existing_documentation
+export -f detect_git_changes
+export -f analyze_specific_files
+export -f run_enhanced_analysis

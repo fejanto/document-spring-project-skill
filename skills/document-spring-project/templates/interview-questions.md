@@ -270,6 +270,188 @@ Show the user:
 
 ---
 
+## Section 7: Patterns & Conventions (2-3 questions)
+
+### Before Asking
+Show the user:
+- Detected architectural patterns (layered, hexagonal, DDD, etc.)
+- Repository patterns observed
+- Service patterns used
+- Any custom base classes or utilities
+
+### Question 7.1: Architectural Patterns
+**Primary Question:**
+> "What architectural patterns does this service follow? I noticed {detected patterns} - are there other important patterns I should document?"
+
+**Follow-up:**
+> "Are there specific design patterns that are critical to how this service works? (CQRS, Event Sourcing, Saga, etc.)"
+
+**What we're looking for:**
+- DDD patterns (aggregates, value objects, domain services)
+- Persistence patterns
+- Messaging patterns
+- Critical design decisions
+
+### Question 7.2: Persistence Conventions
+**Primary Question:**
+> "Are there specific conventions for database operations? For example, transaction boundaries, cascade behavior, or repository patterns?"
+
+**Follow-up:**
+> "How should developers handle entity graphs or related data when making changes?"
+
+**What we're looking for:**
+- Transaction management patterns
+- Entity relationship handling
+- Performance optimization patterns
+- Custom persistence utilities
+
+### Question 7.3: Anti-patterns & Never Do
+**Primary Question:**
+> "What should NEVER be done when modifying code in this service? Are there common mistakes or anti-patterns to avoid?"
+
+**Follow-up:**
+> "Have there been bugs or incidents caused by developers not following certain rules?"
+
+**What we're looking for:**
+- Explicit prohibitions
+- Common mistakes
+- Critical gotchas
+- Lessons learned from incidents
+
+---
+
+## Section 8: Critical Workflows (2-3 questions)
+
+### Before Asking
+Show the user:
+- Complex service methods identified
+- Transaction boundaries detected
+- Async/scheduled jobs found
+- Batch processing patterns
+
+### Question 8.1: Critical Processes
+**Primary Question:**
+> "What workflows or processes in this service are critical and must NOT be modified without careful review and testing?"
+
+**Follow-up:**
+> "Which of these processes require strict ordering of operations or have complex error handling?"
+
+**What we're looking for:**
+- High-risk workflows
+- Processes requiring review
+- Complex orchestrations
+- Financial/regulatory critical paths
+
+### Question 8.2: Execution Order Requirements
+**Primary Question:**
+> "Are there operations that must execute in a specific order? What happens if that order is violated?"
+
+**Follow-up:**
+> "Are there dependencies between steps that aren't obvious from the code?"
+
+**What we're looking for:**
+- Sequence dependencies
+- Side effects that matter
+- Idempotency requirements
+- Rollback/compensation logic
+
+### Question 8.3: Common Developer Tasks
+**Primary Question:**
+> "What are the most common tasks developers perform on this service? (adding endpoints, modifying business rules, changing integrations)"
+
+**Follow-up:**
+> "For each of those tasks, what's the recommended approach or checklist?"
+
+**What we're looking for:**
+- Frequent modification patterns
+- Step-by-step procedures
+- Testing requirements
+- Documentation update triggers
+
+---
+
+## Incremental Interview Questions
+
+When using **incremental documentation mode** (detecting changes via git diff), ask targeted questions based on the type of changes detected:
+
+### For New Controllers/Endpoints
+**Before asking, show:**
+- New endpoint paths detected
+- HTTP methods
+- Request/response types
+
+**Questions:**
+1. "I detected a new endpoint: `{METHOD} {PATH}`. What is its primary business purpose?"
+2. "Are there authorization requirements or business rules specific to this endpoint?"
+3. "Should this endpoint trigger any side effects? (events, notifications, etc.)"
+
+### For New Entities
+**Before asking, show:**
+- New entity name and table
+- Detected relationships
+- Key fields
+
+**Questions:**
+1. "I found a new entity `{EntityName}`. Can you describe its lifecycle? (created → updated → deleted/archived)"
+2. "What are the business rules around this entity? What invariants must always be true?"
+3. "How does this entity relate to existing entities in the domain model?"
+
+### For New Kafka Consumers
+**Before asking, show:**
+- Topic name
+- Event handler class
+- Consumer group
+
+**Questions:**
+1. "I detected a new Kafka consumer for topic `{topic}`. What events does this consume and from which service?"
+2. "What business logic is triggered when these events arrive?"
+3. "Is this processing idempotent? What happens if the same event is received twice?"
+
+### For New Kafka Producers
+**Before asking, show:**
+- Topics produced to
+- Event types
+- Trigger locations
+
+**Questions:**
+1. "I found new event production to `{topic}`. What downstream services consume this?"
+2. "When is this event published? What triggers it?"
+3. "Are there ordering guarantees or delivery semantics that consumers rely on?"
+
+### For Modified Services
+**Before asking, show:**
+- Service class name
+- Changed method signatures (if visible)
+
+**Questions:**
+1. "I detected changes in `{ServiceName}`. Did the business logic change, or was this refactoring?"
+2. "If business logic changed, what's the new rule or behavior?"
+3. "Does this change affect any documented workflows or state transitions?"
+
+### For New External Integrations
+**Before asking, show:**
+- New @FeignClient or RestTemplate usage
+- Target service/URL
+- Called endpoints
+
+**Questions:**
+1. "I found a new integration with `{ServiceName}`. Is this a critical dependency or optional?"
+2. "What happens if this service is unavailable? Should there be a circuit breaker or fallback?"
+3. "Is this integration synchronous and blocking, or can it be handled asynchronously?"
+
+### For Configuration Changes
+**Before asking, show:**
+- New configuration properties
+- Changed values
+- New profiles
+
+**Questions:**
+1. "I detected new configuration: `{property}`. What does this control?"
+2. "Are there environment-specific values that should be documented?"
+3. "Does this change affect setup instructions or deployment requirements?"
+
+---
+
 ## Interview Completion
 
 ### Summary Template
@@ -293,11 +475,28 @@ Based on our conversation, here's what I understand about {Service Name}:
 **Data Model:**
 {Key entities and their lifecycle}
 
+**Architectural Patterns:**
+{Key patterns and conventions}
+
+**Critical Workflows:**
+{Workflows that require careful handling}
+
 **Development Guidelines:**
-{Key conventions and patterns}
+{Key conventions and anti-patterns to avoid}
 
 Is this accurate? Should I proceed with generating the documentation?
 ```
 
 ### User Confirmation
 Wait for user to confirm before generating documentation. Allow for corrections or additions.
+
+---
+
+## Notes for Incremental Mode
+
+When in incremental mode:
+- Only ask questions relevant to detected changes
+- Skip sections where no changes were detected
+- Reference existing documentation when asking questions
+- Focus on how changes integrate with existing architecture
+- Confirm if changes require updating existing sections beyond what's obvious

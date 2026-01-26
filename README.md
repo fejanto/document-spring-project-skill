@@ -1,6 +1,17 @@
-# Document Spring Project Skill
+# Document Spring Project Skill (v2.0)
 
 A Claude Code skill that analyzes Spring Boot microservices and generates comprehensive documentation through automated technical analysis combined with interactive interview.
+
+## ⭐ New in v2.0
+
+- **3 Operation Modes**: Full Analysis, Incremental Update, Selective Documentation
+- **New Documentation Structure**: CLAUDE.md + .claude/rules/ + docs/ (Claude Code 2026 pattern)
+- **Git-based Change Detection**: Incremental mode detects changes since last doc commit
+- **Extended Interview**: 8 sections including Patterns & Critical Workflows
+- **Optional Hook Setup**: Automatic reminders to update docs after code changes
+- **/docs Command**: Quick access via command alias
+- **Auto-Update System**: Automatic update checks and easy update via `/docs-update`
+- **Public Examples**: Generic Order Management Service examples (no private references)
 
 ## Features
 
@@ -29,6 +40,8 @@ A Claude Code skill that analyzes Spring Boot microservices and generates compre
 ## Quick Start
 
 ### Installation via Plugin (Recommended)
+
+**Important**: Once installed, the plugin checks for updates automatically every 24 hours and notifies you when a new version is available.
 
 ```bash
 # Add the marketplace
@@ -135,6 +148,42 @@ Analyzes current code, compares with existing docs, updates only changed section
 > document only the API endpoints
 ```
 Generates specific sections only.
+
+## Updating the Plugin
+
+The plugin includes an automatic update system:
+
+### Auto-Update Check
+
+- **Automatic**: Checks for updates every 24 hours when Claude Code loads the plugin
+- **Non-intrusive**: Only shows a notification, doesn't update automatically
+- **Works with git**: Requires the plugin to be installed as a git repository
+
+**When an update is available, you'll see:**
+```
+📦 Update available for document-spring-project plugin
+   Current: a3f4b891
+   Latest:  f7e2d943
+
+   Run: /docs-update
+```
+
+### Manual Update
+
+```bash
+# Easiest way (recommended)
+/docs-update
+
+# Or using Claude Code commands
+/plugin update document-spring-project
+
+# Or manually via git
+cd ~/.claude/plugins/marketplaces/fejanto-skills/
+git pull origin master
+/plugin reload document-spring-project
+```
+
+**See [AUTO_UPDATE.md](AUTO_UPDATE.md) for detailed documentation.**
 
 ## How It Works
 
